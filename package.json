@@ -1,0 +1,173 @@
+{
+  "name": "project-master",
+  "displayName": "project-master",
+  "description": "manage your projects, organize efficiently",
+  "publisher": "Arktomson",
+  "version": "0.1.0",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "keywords": [
+    "project",
+    "management",
+    "workspace"
+  ],
+  "license": "MIT",
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "project-master",
+          "title": "Project Master",
+          "icon": "media/project.svg"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "projectExplorer",
+          "name": "项目管理器",
+          "when": "explorerViewletVisible",
+          "group": "navigation@-15"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "projectExplorer.addProject",
+        "title": "添加项目",
+        "icon": "$(add)"
+      },
+      {
+        "command": "projectExplorer.addCurrentProject",
+        "title": "添加当前项目",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "projectExplorer.resetData",
+        "title": "重置数据",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "projectExplorer.openCategoryProjects",
+        "title": "打开分类下所有项目"
+      },
+      {
+        "command": "projectExplorer.renameProject",
+        "title": "重命名项目"
+      },
+      {
+        "command": "projectExplorer.deleteProject",
+        "title": "删除项目"
+      },
+      {
+        "command": "projectExplorer.renameCategory",
+        "title": "重命名分类"
+      },
+      {
+        "command": "projectExplorer.deleteCategory",
+        "title": "删除分类"
+      },
+      {
+        "command": "projectExplorer.exportData",
+        "title": "导出数据",
+        "icon": "$(export)"
+      },
+      {
+        "command": "projectExplorer.importData",
+        "title": "导入数据",
+        "icon": "$(arrow-down)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "projectExplorer.addProject",
+          "when": "view == projectExplorer",
+          "group": "navigation@1"
+        },
+        {
+          "command": "projectExplorer.addCurrentProject",
+          "when": "view == projectExplorer && workspaceFolderCount > 0",
+          "group": "navigation@2"
+        },
+        {
+          "command": "projectExplorer.resetData",
+          "when": "view == projectExplorer",
+          "group": "navigation@3"
+        },
+        {
+          "command": "projectExplorer.exportData",
+          "when": "view == projectExplorer",
+          "group": "navigation@4"
+        },
+        {
+          "command": "projectExplorer.importData",
+          "when": "view == projectExplorer",
+          "group": "navigation@5"
+        }
+      ],
+      "editor/context": [],
+      "explorer/context": [],
+      "view/item/context": [
+        {
+          "command": "projectExplorer.openCategoryProjects",
+          "when": "view == projectExplorer && viewItem == category",
+          "group": "1_modification"
+        },
+        {
+          "command": "projectExplorer.renameCategory",
+          "when": "view == projectExplorer && viewItem == category",
+          "group": "1_modification"
+        },
+        {
+          "command": "projectExplorer.deleteCategory",
+          "when": "view == projectExplorer && viewItem == category",
+          "group": "1_modification"
+        },
+        {
+          "command": "projectExplorer.renameProject",
+          "when": "view == projectExplorer && viewItem == project",
+          "group": "1_modification"
+        },
+        {
+          "command": "projectExplorer.deleteProject",
+          "when": "view == projectExplorer && viewItem == project",
+          "group": "1_modification"
+        }
+      ]
+    }
+  },
+  "activationEvents": [],
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint": "^9.16.0",
+    "typescript": "^5.7.2",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}

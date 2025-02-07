@@ -1,0 +1,7 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <!-- 主体图标采用当前主题颜色 -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M3 4C2.44772 4 2 4.44772 2 5V19C2 19.5523 2.44772 20 3 20H21C21.5523 20 22 19.5523 22 19V7C22 6.44772 21.5523 6 21 6H12.4142L10.4142 4H3ZM4 6V18H20V8H11.5858L9.58579 6H4Z" fill="currentColor"/>
+    
+    <!-- 内部装饰 -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M7 11C7 10.4477 7.44772 10 8 10H16C16.5523 10 17 10.4477 17 11V15C17 15.5523 16.5523 16 16 16H8C7.44772 16 7 15.5523 7 15V11ZM9 12V14H15V12H9Z" fill="currentColor"/>
+</svg> 
