@@ -241,6 +241,12 @@ jobs:
             exit 1
           }
 
+      - name: 触发发布工作流
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GH_PAT }}
+          event-type: trigger-publish
+
       - name: 获取 Changelog
         id: changelog
         run: |

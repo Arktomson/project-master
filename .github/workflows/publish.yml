@@ -1,12 +1,9 @@
 name: Publish Extension
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "版本号 (例如: 1.0.0)"
-        required: true
-        type: string
+  workflow_dispatch: {}
+  repository_dispatch:
+    types: [trigger-publish]
 
 jobs:
   publish:
@@ -26,9 +23,15 @@ jobs:
       - name: Package Extension
         run: npm run package
 
+      - name: 获取版本号
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Publish to Visual Studio Marketplace
         run: |
           npm install -g @vscode/vsce
-          vsce publish ${{ inputs.version }} -p ${{ secrets.VSCE_PAT }}
+          vsce publish ${{ steps.get_version.outputs.version }} -p ${{ secrets.VSCE_PAT }}
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}

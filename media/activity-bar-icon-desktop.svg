@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <!-- 渐变定义 -->
+  <defs>
+    <linearGradient id="folderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4B91F7" />
+      <stop offset="100%" style="stop-color:#2B6DE6" />
+    </linearGradient>
+    <linearGradient id="decorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#63B3ED" />
+      <stop offset="100%" style="stop-color:#3182CE" />
+    </linearGradient>
+  </defs>
+
+  <!-- 主文件夹轮廓 -->
+  <path fill="url(#folderGradient)" stroke="#2C5282" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+    d="M3 6a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 13.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z" />
+
+  <!-- 项目方块组 -->
+  <path fill="none" stroke="#E2E8F0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+    d="M7 13h4m-4 3h6" />
+
+  <!-- 小方块装饰 -->
+  <rect x="14" y="11" width="4" height="4" rx="1" fill="url(#decorGradient)" stroke="#2C5282" stroke-width="1.5" />
+
+  <!-- 高光效果 -->
+  <path fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-linecap="round" d="M5 6h10M7 9h8" />
+</svg>

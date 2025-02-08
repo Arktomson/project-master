@@ -1,10 +1,10 @@
 {
   "name": "project-master",
-  "displayName": "project-master",
+  "displayName": "Project Master",
   "description": "manage your projects, organize efficiently",
   "publisher": "Arktomson",
-  "version": "0.1.1",
-  "icon": "media/project.png",
+  "version": "0.1.0",
+  "icon": "media/activity-bar-icon-desktop.png",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -28,7 +28,7 @@
         {
           "id": "project-master",
           "title": "Project Master",
-          "icon": "media/project.png"
+          "icon": "media/activity-bar-icon.svg"
         }
       ]
     },
