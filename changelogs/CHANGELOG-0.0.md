@@ -1,7 +1,3 @@
-# Changelog
-
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
-
 ## 0.1.0 (2025-02-08)
 
 
@@ -26,12 +22,3 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
-
-
-## Previous Changelogs
-
-### 0.x (2025-02-08 - Present)
-Current changelog
-
-See [0.x changelog](changelogs/CHANGELOG-0.0.md)
-

@@ -3,7 +3,7 @@
   "displayName": "project-master",
   "description": "manage your projects, organize efficiently",
   "publisher": "Arktomson",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "icon": "media/project.png",
   "engines": {
     "vscode": "^1.85.0"
