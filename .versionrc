@@ -1,0 +1,114 @@
+{
+  "header": "",
+  "headerFormat": "{{#if isPatch}}## [{{version}}]({{compareUrl}}) ({{date}}){{else}}{{#if isMinor}}## [{{version}}]({{compareUrl}}) ({{date}}){{else}}# [{{version}}]({{compareUrl}}) ({{date}}){{/if}}{{/if}}",
+  "releaseCommitMessageFormat": "chore(release): 发布 {{currentTag}}",
+  "types": [
+    {
+      "type": "feat",
+      "section": "✨ 新功能"
+    },
+    {
+      "type": "fix",
+      "section": "🐛 问题修复"
+    },
+    {
+      "type": "docs",
+      "section": "📝 文档更新"
+    },
+    {
+      "type": "style",
+      "section": "💄 样式调整"
+    },
+    {
+      "type": "refactor",
+      "section": "♻️ 代码重构"
+    },
+    {
+      "type": "perf",
+      "section": "⚡️ 性能优化"
+    },
+    {
+      "type": "test",
+      "section": "✅ 测试相关"
+    },
+    {
+      "type": "build",
+      "section": "📦 构建相关"
+    },
+    {
+      "type": "ci",
+      "section": "👷 CI/CD"
+    },
+    {
+      "type": "chore",
+      "section": "🔧 其他更新"
+    }
+  ],
+  "bumpFiles": [
+    "package.json",
+    "package-lock.json",
+    "manifest.json"
+  ],
+  "tagPrefix": "v",
+  "skip": {
+    "changelog": false
+  },
+  "packageFiles": [
+    "package.json"
+  ],
+  "path": ".",
+  "infile": "CHANGELOG.md",
+  "preset": {
+    "name": "conventionalcommits",
+    "types": [
+      {
+        "type": "feat",
+        "section": "✨ 新功能"
+      },
+      {
+        "type": "fix",
+        "section": "🐛 问题修复"
+      },
+      {
+        "type": "docs",
+        "section": "📝 文档更新"
+      },
+      {
+        "type": "style",
+        "section": "💄 样式调整"
+      },
+      {
+        "type": "refactor",
+        "section": "♻️ 代码重构"
+      },
+      {
+        "type": "perf",
+        "section": "⚡️ 性能优化"
+      },
+      {
+        "type": "test",
+        "section": "✅ 测试相关"
+      },
+      {
+        "type": "build",
+        "section": "📦 构建相关"
+      },
+      {
+        "type": "ci",
+        "section": "👷 CI/CD"
+      },
+      {
+        "type": "chore",
+        "section": "🔧 其他更新"
+      }
+    ],
+    "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}",
+    "commitUrlFormat": "{{host}}/{{owner}}/{{repository}}/commit/{{hash}}",
+    "compareUrlFormat": "{{host}}/{{owner}}/{{repository}}/compare/{{previousTag}}...{{currentTag}}",
+    "userUrlFormat": "{{host}}/{{user}}",
+    "issuePrefixes": [
+      "#"
+    ],
+    "headerPattern": "^(\\d+)\\.(\\d+)\\.(\\d+)$"
+  }
+}
