@@ -1,0 +1,280 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: "选择版本类型"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      custom_changelog:
+        description: "额外的 Changelog 内容 (可选)"
+        required: false
+        type: string
+
+# 并发控制
+concurrency:
+  group: "release"
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # 添加 token 以确保有足够的权限推送
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 配置 Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: 准备自定义 Changelog
+        if: ${{ inputs.custom_changelog != '' }}
+        run: |
+          echo "${{ inputs.custom_changelog }}" > custom_changelog.md
+
+      - name: 显示当前 Changelog
+        run: |
+          echo "=== 当前 CHANGELOG 内容 ==="
+          if [ -f "CHANGELOG.md" ]; then
+            cat CHANGELOG.md
+          else
+            echo "CHANGELOG.md 文件不存在"
+          fi
+          echo "=== CHANGELOG 内容结束 ==="
+
+      - name: 创建新版本
+        id: version
+        run: |
+          # 执行 standard-version
+          if ! npm run release:${{ github.event.inputs.version_type }}; then
+            echo "运行 standard-version 失败" 
+            exit 1
+          fi
+
+          echo "=== 新生成的 CHANGELOG 内容 ==="
+          cat CHANGELOG.md
+          echo "=== CHANGELOG 内容结束 ==="
+
+          # 处理所有版本标题的格式
+          echo "处理所有版本标题格式..."
+          awk '
+            BEGIN { inContent = 0 }
+            
+            # 第一个空行之前的内容保持不变
+            NF == 0 && !inContent {
+              print;
+              inContent = 1;
+              next;
+            }
+            
+            # 对于版本号标题进行转换
+            /^#{1,3} +(\[?[0-9]+\.[0-9]+\.[0-9]+\]?|\[?[0-9]+\.[0-9]+\.[0-9]+\]? +\([0-9]{4}-[0-9]{2}-[0-9]{2}\))/ {
+              # 提取版本号
+              match($0, /[0-9]+\.[0-9]+\.[0-9]+/);
+              version = substr($0, RSTART, RLENGTH);
+              
+              # 如果是 major 版本 (x.0.0)，使用一级标题
+              if (version ~ /[0-9]+\.0\.0/) {
+                sub(/^#{1,3}/, "#");
+              }
+              # minor 和 patch 版本使用二级标题
+              else {
+                sub(/^#{1,3}/, "##");
+              }
+              print;
+              next;
+            }
+            
+            # 其他行保持不变
+            {
+              print;
+            }
+          ' CHANGELOG.md > temp_changelog.md
+          mv temp_changelog.md CHANGELOG.md
+
+          # 如果有自定义 changelog
+          if [ -f "custom_changelog.md" ]; then
+            # 添加特殊样式标题和自定义内容
+            echo "### 🔔 更新说明" > formatted_custom_changelog.md
+            cat custom_changelog.md >> formatted_custom_changelog.md
+
+            # 插入自定义内容到版本标题之后
+            awk '
+              /^#{1,2} \[?[0-9]+\.[0-9]+\.[0-9]+\]?/{
+                if (!found) {
+                  print;
+                  system("cat formatted_custom_changelog.md");
+                  found=1;
+                } else {
+                  print;
+                }
+              }
+              !/^#{1,2} \[?[0-9]+\.[0-9]+\.[0-9]+\]?/{print}
+            ' CHANGELOG.md > temp_changelog.md
+
+            # 替换原文件
+            mv temp_changelog.md CHANGELOG.md
+            rm formatted_custom_changelog.md
+          fi
+
+          # 更新历史版本信息
+          # 获取当前主版本号
+          CURRENT_VERSION=$(node -p "require('./package.json').version" | cut -d. -f1)
+          if [ -z "$CURRENT_VERSION" ]; then
+              echo "错误: 无法获取版本号"
+              exit 1
+          fi
+
+          echo "当前主版本号: $CURRENT_VERSION"
+
+          # 确保 changelogs 目录存在
+          mkdir -p changelogs
+
+          # 提取当前主版本的变更日志
+          MAJOR_VERSION_FILE="changelogs/CHANGELOG-${CURRENT_VERSION}.0.md"
+          echo "创建文件: $MAJOR_VERSION_FILE"
+
+          # 使用正则表达式提取当前主版本的变更日志
+          awk -v version="$CURRENT_VERSION" '
+              BEGIN { in_version = 0 }
+              
+              # 匹配版本号行
+              /^#{1,2} \[?[0-9]+\.[0-9]+\.[0-9]+\]?/ {
+                  # 检查是否是当前主版本的版本号
+                  if ($0 ~ "^#{1,2} \\[?" version "\\.[0-9]+\\.[0-9]+\\]?") {
+                      print;  # 打印版本号行
+                      in_version = 1;
+                  } else if (in_version) {
+                      # 如果遇到其他版本号且正在处理当前版本，则退出
+                      exit;
+                  }
+                  next;
+              }
+              
+              # 如果在当前版本范围内，打印所有非版本号行
+              in_version { print }
+          ' CHANGELOG.md > "$MAJOR_VERSION_FILE"
+
+          # 检查文件是否生成成功
+          if [ ! -s "$MAJOR_VERSION_FILE" ]; then
+              echo "错误: 无法提取当前主版本的变更日志"
+              exit 1
+          fi
+
+          # 创建临时文件，保存原有内容（不包括 Previous Changelogs 部分）
+          awk '/^## Previous Changelogs/{exit} {print}' CHANGELOG.md > temp_main.md
+
+          # 添加 Previous Changelogs 标题
+          echo -e "\n\n## Previous Changelogs\n" > temp_changelog.md
+
+          # 获取所有版本的 tag，并按版本号分组
+          for major in $(git tag -l "v*" | cut -d. -f1 | sort -u -V); do
+              # 获取该主版本的第一个和最后一个 tag
+              FIRST_TAG=$(git tag -l "${major}.*" | sort -V | head -n1)
+              LAST_TAG=$(git tag -l "${major}.*" | sort -V | tail -n1)
+
+              # 获取对应的日期
+              START_DATE=$(git log -1 --format=%ad --date=short $FIRST_TAG)
+              if [ "$major" = "v$CURRENT_VERSION" ]; then
+                  END_DATE="Present"
+              else
+                  END_DATE=$(git log -1 --format=%ad --date=short $LAST_TAG)
+              fi
+
+              # 移除 v 前缀
+              MAJOR_NUM=${major#v}
+              echo "### ${MAJOR_NUM}.x ($START_DATE - $END_DATE)" >> temp_changelog.md
+              
+              if [ "$major" = "v$CURRENT_VERSION" ]; then
+                  echo "Current changelog" >> temp_changelog.md
+                  echo "" >> temp_changelog.md
+                  echo "See [${MAJOR_NUM}.x changelog](changelogs/CHANGELOG-${MAJOR_NUM}.0.md)" >> temp_changelog.md
+              else
+                  echo "See [${MAJOR_NUM}.x changelog](changelogs/CHANGELOG-${MAJOR_NUM}.0.md)" >> temp_changelog.md
+              fi
+              
+              echo "" >> temp_changelog.md
+          done
+
+          # 合并主要内容和历史版本信息
+          cat temp_main.md temp_changelog.md > CHANGELOG.md
+          rm temp_main.md temp_changelog.md
+
+          # 提交更改
+          git add CHANGELOG.md "$MAJOR_VERSION_FILE"
+          git commit --amend --no-edit || {
+              echo "提交更改失败"
+              exit 1
+          }
+
+          # 获取新版本号
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          if [ -z "$NEW_VERSION" ]; then
+            echo "获取版本号失败"
+            exit 1
+          fi
+          echo "version=v${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: 构建
+        run: |
+          if ! npm run clean; then
+            echo "清理构建失败"
+            exit 1
+          fi
+
+          if ! npm run build:esbuild; then
+            echo "构建失败"
+            exit 1
+          fi
+
+      - name: 推送变更
+        run: |
+          git push --follow-tags origin master || {
+            echo "推送到远程仓库失败"
+            exit 1
+          }
+
+      - name: 获取 Changelog
+        id: changelog
+        run: |
+          if [ ! -f CHANGELOG.md ]; then
+            echo "CHANGELOG.md 文件不存在"
+            exit 1
+          fi
+
+          CHANGELOG=$(cat CHANGELOG.md)
+          {
+            echo "changelog<<EOF"
+            echo "$CHANGELOG"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          generate_release_notes: false
+          body: |
+            Please refer to [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md) for details.
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

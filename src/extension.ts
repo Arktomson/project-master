@@ -79,11 +79,6 @@ class ProjectManager {
   private projects: ProjectData[] = [];
   private extensionId = "Arktomson.project-master";
 
-  // 通知其他窗口刷新数据
-  private notifyOtherWindows(): void {
-    refreshEvent.fire();
-  }
-
   constructor(private context: vscode.ExtensionContext) {
     if (
       this.context.globalState.get(ProjectManager.STORAGE_KEY) === undefined
@@ -100,7 +95,6 @@ class ProjectManager {
   saveProject(project: ProjectData): void {
     this.projects.push(project);
     this.context.globalState.update(ProjectManager.STORAGE_KEY, this.projects);
-    this.notifyOtherWindows();
   }
 
   getAllProjects(): ProjectData[] {
@@ -122,6 +116,11 @@ class ProjectManager {
     return Array.from(categories);
   }
 
+  // 刷新项目数据
+  refreshProjects(): void {
+    this.projects = this.getAllProjects();
+  }
+
   // 添加重命名项目方法
   renameProject(oldName: string, category: string, newName: string): boolean {
     const projectIndex = this.projects.findIndex(
@@ -133,7 +132,6 @@ class ProjectManager {
         ProjectManager.STORAGE_KEY,
         this.projects
       );
-      this.notifyOtherWindows();
       return true;
     }
     return false;
@@ -150,7 +148,6 @@ class ProjectManager {
         ProjectManager.STORAGE_KEY,
         this.projects
       );
-      this.notifyOtherWindows();
       return true;
     }
     return false;
@@ -170,7 +167,6 @@ class ProjectManager {
         ProjectManager.STORAGE_KEY,
         this.projects
       );
-      this.notifyOtherWindows();
       return true;
     }
     return false;
@@ -188,7 +184,6 @@ class ProjectManager {
         ProjectManager.STORAGE_KEY,
         this.projects
       );
-      this.notifyOtherWindows();
       return true;
     }
     return false;
@@ -198,7 +193,6 @@ class ProjectManager {
   resetData(): void {
     this.projects = [];
     this.context.globalState.update(ProjectManager.STORAGE_KEY, this.projects);
-    this.notifyOtherWindows();
   }
 
   // 获取所有分类（包括手动输入选项）
@@ -318,6 +312,9 @@ class ProjectType implements vscode.TreeDataProvider<ProjectItem> {
   }
 
   refresh(): void {
+    // 刷新项目数据
+    this.projectManager.refreshProjects();
+    // 触发视图刷新
     this._onDidChangeTreeData.fire();
   }
 }
@@ -353,7 +350,7 @@ class ProjectItem extends vscode.TreeItem {
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    refreshEvent.event(() => {
+    vscode.window.onDidChangeWindowState(() => {
       projectType.refresh();
     })
   );
@@ -630,6 +627,15 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  // 注册刷新命令
+  let refreshCommand = vscode.commands.registerCommand(
+    "projectExplorer.refresh",
+    () => {
+      projectType.refresh();
+      vscode.window.showInformationMessage("数据已刷新");
+    }
+  );
+
   context.subscriptions.push(
     openCategoryProjectsCommand,
     addProjectCommand,
@@ -640,7 +646,8 @@ export function activate(context: vscode.ExtensionContext) {
     deleteCategoryCommand,
     resetDataCommand,
     exportDataCommand,
-    importDataCommand
+    importDataCommand,
+    refreshCommand
   );
 }
 

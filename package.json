@@ -3,8 +3,8 @@
   "displayName": "project-master",
   "description": "manage your projects, organize efficiently",
   "publisher": "Arktomson",
-  "version": "0.1.0",
-  "icon": "media/icon.png",
+  "version": "0.0.0",
+  "icon": "media/project.png",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -24,21 +24,24 @@
         {
           "id": "project-master",
           "title": "Project Master",
-          "icon": "media/project.svg"
+          "icon": "media/project.png"
         }
       ]
     },
     "views": {
-      "explorer": [
+      "project-master": [
         {
           "id": "projectExplorer",
-          "name": "项目管理器",
-          "when": "explorerViewletVisible",
-          "group": "navigation@-15"
+          "name": "项目管理器"
         }
       ]
     },
     "commands": [
+      {
+        "command": "projectExplorer.refresh",
+        "title": "刷新",
+        "icon": "$(refresh)"
+      },
       {
         "command": "projectExplorer.addProject",
         "title": "添加项目",
@@ -87,6 +90,11 @@
     ],
     "menus": {
       "view/title": [
+        {
+          "command": "projectExplorer.refresh",
+          "when": "view == projectExplorer",
+          "group": "navigation@0"
+        },
         {
           "command": "projectExplorer.addProject",
           "when": "view == projectExplorer",
@@ -154,20 +162,25 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch"
   },
   "devDependencies": {
-    "@types/vscode": "^1.85.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
-    "eslint": "^9.16.0",
-    "typescript": "^5.7.2",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.16.0",
+    "standard-version": "^9.5.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.7.2",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4"
   }
 }

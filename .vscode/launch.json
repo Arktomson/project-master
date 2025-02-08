@@ -6,7 +6,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run Extension",
+			"name": "Run Extension (Window 1)",
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
@@ -16,6 +16,24 @@
 				"${workspaceFolder}/dist/**/*.js"
 			],
 			// "preLaunchTask": "${defaultBuildTask}"
+		},
+		{
+			"name": "Run Extension (Window 2)",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			]
+		}
+	],
+	"compounds": [
+		{
+			"name": "启动所有窗口",
+			"configurations": ["Run Extension (Window 1)", "Run Extension (Window 2)"],
+			"stopAll": false
 		}
 	]
 }
