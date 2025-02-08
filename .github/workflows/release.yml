@@ -234,18 +234,6 @@ jobs:
           fi
           echo "version=v${NEW_VERSION}" >> $GITHUB_OUTPUT
 
-      - name: 构建
-        run: |
-          if ! npm run clean; then
-            echo "清理构建失败"
-            exit 1
-          fi
-
-          if ! npm run build:esbuild; then
-            echo "构建失败"
-            exit 1
-          fi
-
       - name: 推送变更
         run: |
           git push --follow-tags origin master || {
