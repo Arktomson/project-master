@@ -1,6 +1,10 @@
-# Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+## [0.1.1](https://github.com/Arktomson/project-master/compare/v0.1.0...v0.1.1) (2025-02-08)
+
+
+### ✨ 新功能
+
+* versionrc配置文件 ([8b27d5a](https://github.com/Arktomson/project-master/commit/8b27d5acff9adff9414dcfb05454b0fc9da343cf))
 
 ## 0.1.0 (2025-02-08)
 
@@ -26,6 +30,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
+
+
 
 
 ## Previous Changelogs
