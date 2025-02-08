@@ -14,6 +14,10 @@
     "workspace"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Arktomson/project-master.git"
+  },
   "categories": [
     "Other"
   ],
