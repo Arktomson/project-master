@@ -236,7 +236,7 @@ jobs:
 
       - name: 推送变更
         run: |
-          git push --follow-tags origin master || {
+          git push --follow-tags origin main || {
             echo "推送到远程仓库失败"
             exit 1
           }
