@@ -244,7 +244,7 @@ jobs:
       - name: 触发发布工作流
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           event-type: trigger-publish
 
       - name: 获取 Changelog
