@@ -627,15 +627,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  // 注册刷新命令
-  let refreshCommand = vscode.commands.registerCommand(
-    "projectExplorer.refresh",
-    () => {
-      projectType.refresh();
-      vscode.window.showInformationMessage("数据已刷新");
-    }
-  );
-
   context.subscriptions.push(
     openCategoryProjectsCommand,
     addProjectCommand,
@@ -646,8 +637,7 @@ export function activate(context: vscode.ExtensionContext) {
     deleteCategoryCommand,
     resetDataCommand,
     exportDataCommand,
-    importDataCommand,
-    refreshCommand
+    importDataCommand
   );
 }
 

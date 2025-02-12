@@ -42,11 +42,6 @@
     },
     "commands": [
       {
-        "command": "projectExplorer.refresh",
-        "title": "刷新",
-        "icon": "$(refresh)"
-      },
-      {
         "command": "projectExplorer.addProject",
         "title": "添加项目",
         "icon": "$(add)"
