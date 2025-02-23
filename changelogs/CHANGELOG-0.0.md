@@ -1,3 +1,28 @@
+## [0.2.0](https://github.com/Arktomson/project-master/compare/v0.1.1...v0.2.0) (2025-02-23)
+
+
+### 🔧 其他更新
+
+* **release:** 发布 0.1.2 ([d5bff91](https://github.com/Arktomson/project-master/commit/d5bff91c55b18431b90dd8540f8137a9223dc601))
+
+
+### 🐛 问题修复
+
+* 包+1 ([8250d69](https://github.com/Arktomson/project-master/commit/8250d690ac19a8c88ab57474a30cb0c184528c9a))
+* 工作流改动 ([5772b2e](https://github.com/Arktomson/project-master/commit/5772b2e38876f814fd044f6ced95fb10aa17c65d))
+
+
+### ♻️ 代码重构
+
+* 去除刷新按钮 ([6ba62c2](https://github.com/Arktomson/project-master/commit/6ba62c218d32c916d9b0477a8e7c390835d19322))
+
+
+### ✨ 新功能
+
+* 图标更换，工作流更新 ([1688b2d](https://github.com/Arktomson/project-master/commit/1688b2dff0d873cad0225b4fc6f8a4b51097f9ce))
+* 增加git仓库信息 ([21811ed](https://github.com/Arktomson/project-master/commit/21811ed7f383bc59967ef4e29ab53947fec0d702))
+* 外部文件视图 ([d0bf65f](https://github.com/Arktomson/project-master/commit/d0bf65f3f21e3b756cc9299b238c6ef8b96f960f))
+
 ## [0.1.2](https://github.com/Arktomson/project-master/compare/v0.1.1...v0.1.2) (2025-02-08)
 
 
@@ -42,6 +67,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
+
+
 
 
 
