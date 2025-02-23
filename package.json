@@ -37,10 +37,22 @@
         {
           "id": "projectExplorer",
           "name": "项目管理器"
+        },
+        {
+          "id": "externalFileView",
+          "name": "外部文件视图"
         }
       ]
     },
     "commands": [
+      {
+        "command": "project-master.openFolderInCurrentWindow",
+        "title": "在当前窗口打开文件夹"
+      },
+      {
+        "command": "project-master.openFolderInNewWindow",
+        "title": "在新窗口打开文件夹"
+      },
       {
         "command": "projectExplorer.addProject",
         "title": "添加项目",
@@ -85,15 +97,36 @@
         "command": "projectExplorer.importData",
         "title": "导入数据",
         "icon": "$(arrow-down)"
+      },
+      {
+        "command": "projectExplorer.openProjectInCurrentWindow",
+        "title": "在当前窗口打开"
+      },
+      {
+        "command": "externalFileView.addFile",
+        "title": "添加文件",
+        "icon": "$(add)"
+      },
+      {
+        "command": "externalFileView.deleteItem",
+        "title": "删除",
+        "icon": "$(trash)"
       }
     ],
     "menus": {
-      "view/title": [
+      "explorer/context": [
         {
-          "command": "projectExplorer.refresh",
-          "when": "view == projectExplorer",
-          "group": "navigation@0"
+          "when": "explorerResourceIsFolder",
+          "command": "project-master.openFolderInCurrentWindow",
+          "group": "navigation"
         },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "project-master.openFolderInNewWindow",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
         {
           "command": "projectExplorer.addProject",
           "when": "view == projectExplorer",
@@ -118,10 +151,14 @@
           "command": "projectExplorer.importData",
           "when": "view == projectExplorer",
           "group": "navigation@5"
+        },
+        {
+          "command": "externalFileView.addFile",
+          "when": "view == externalFileView",
+          "group": "navigation"
         }
       ],
       "editor/context": [],
-      "explorer/context": [],
       "view/item/context": [
         {
           "command": "projectExplorer.openCategoryProjects",
@@ -139,6 +176,11 @@
           "group": "1_modification"
         },
         {
+          "command": "projectExplorer.openProjectInCurrentWindow",
+          "when": "view == projectExplorer && viewItem == project",
+          "group": "1_modification"
+        },
+        {
           "command": "projectExplorer.renameProject",
           "when": "view == projectExplorer && viewItem == project",
           "group": "1_modification"
@@ -147,6 +189,11 @@
           "command": "projectExplorer.deleteProject",
           "when": "view == projectExplorer && viewItem == project",
           "group": "1_modification"
+        },
+        {
+          "command": "externalFileView.deleteItem",
+          "when": "view == externalFileView",
+          "group": "inline"
         }
       ]
     }
