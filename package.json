@@ -54,6 +54,10 @@
         "title": "在新窗口打开文件夹"
       },
       {
+        "command": "project-master.updateSnippetsFromFolder",
+        "title": "更新代码片段"
+      },
+      {
         "command": "projectExplorer.addProject",
         "title": "添加项目",
         "icon": "$(add)"
@@ -123,6 +127,11 @@
         {
           "when": "explorerResourceIsFolder",
           "command": "project-master.openFolderInNewWindow",
+          "group": "navigation"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "project-master.updateSnippetsFromFolder",
           "group": "navigation"
         }
       ],
@@ -210,6 +219,7 @@
     "lint": "eslint src",
     "clean": "rm -rf dist",
     "test": "vscode-test",
+    "visx": "vsce package",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:major": "standard-version --release-as major",
