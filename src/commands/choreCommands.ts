@@ -85,6 +85,8 @@ export function registerChoreCommands(context: vscode.ExtensionContext) {
                       return path.join(home, 'Library/Application Support/Windsurf/User');
                     case 'cursor':
                       return path.join(home, 'Library/Application Support/Cursor/User');
+                    case 'Trae CN':
+                      return path.join(home, 'Library/Application Support/Trae CN/User');
                     default:
                       return '';
                   }
@@ -151,6 +153,13 @@ export function registerChoreCommands(context: vscode.ExtensionContext) {
                 results.push('Cursor');
               } catch (error) {
                 console.error('Cursor更新失败:', error);
+              }
+
+              try {
+                await updateEditorSnippets('Trae CN', 'Trae CN');
+                results.push('Trae CN');
+              } catch (error) {
+                console.error('Trae CN更新失败:', error);
               }
               
               // 最后统一显示更新成功的编辑器
