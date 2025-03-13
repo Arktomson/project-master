@@ -1,4 +1,11 @@
 
+## [0.3.1](https://github.com/Arktomson/project-master/compare/v0.3.0...v0.3.1) (2025-03-13)
+
+
+### ✨ 新功能
+
+* 代码片段更新支持trae ([d263de4](https://github.com/Arktomson/project-master/commit/d263de442d8ed598a2f57d0d28a7edcb39b60f51))
+
 ## [0.3.0](https://github.com/Arktomson/project-master/compare/v0.2.0...v0.3.0) (2025-03-11)
 
 
@@ -75,6 +82,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
+
+
 
 
 
