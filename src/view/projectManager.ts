@@ -4,187 +4,28 @@ export const loadProjectManagerView = (context: vscode.ExtensionContext) => {
   const projectManager = new ProjectManager(context);
   const projectType = new ProjectType(projectManager);
 
-
-  // 注册打开类别下所有项目的命令
-  let openCategoryProjectsCommand = vscode.commands.registerCommand(
-    "projectExplorer.openCategoryProjects",
-    async (item: ProjectItem) => {
-      if (item.type === "category") {
-        const projects = projectManager.getProjectsByCategory(item.label);
-        // 为每个项目创建一个打开窗口的Promise
-        const openPromises = projects.map(
-          (project, index) =>
-            new Promise<void>((resolve) => {
-              // 添加小延迟，避免同时打开太多窗口
-              setTimeout(() => {
-                vscode.commands.executeCommand(
-                  "vscode.openFolder",
-                  vscode.Uri.file(project.path),
-                  { forceNewWindow: true }
-                );
-                resolve();
-              }, index * 500); // 每个窗口间隔500ms
-            })
-        );
-
-        vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: `正在打开 ${item.label} 下的项目...`,
-            cancellable: false,
-          },
-          async () => {
-            await Promise.all(openPromises);
-            vscode.window.showInformationMessage(
-              `已打开 ${item.label} 下的所有项目`
-            );
-          }
-        );
-      }
-    }
-  );
-
-  // 注册添加当前项目命令
-  let addCurrentProjectCommand = vscode.commands.registerCommand(
-    "projectExplorer.addCurrentProject",
-    async () => {
-      const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-      if (!workspaceFolder) {
-        vscode.window.showErrorMessage("没有打开的工作区");
-        return;
-      }
-
-      const folderPath = workspaceFolder.uri.fsPath;
-      const folderName = workspaceFolder.name;
-
-      // 获取项目名称
-      const projectName = await vscode.window.showInputBox({
-        prompt: "输入项目名称（留空则使用文件夹名）",
-        placeHolder: folderName,
-        value: folderName,
-      });
-
-      if (!projectName) {
-        return;
-      }
-
-      // 选择分类
-      const category = await projectManager.handleCategorySelection();
-      console.log(category);
-      if (category === undefined) {
-        return; // 用户取消了分类选择
-      }
-
-      projectManager.saveProject({
-        category: category || "default", // 如果返回空字符串，使用default
-        name: projectName,
-        path: folderPath,
-      });
-      projectType.refresh();
-      vscode.window.showInformationMessage(
-        `项目 "${projectName}" 已添加到 "${category || "default"}" 分类`
-      );
-    }
-  );
-
-  // 修改添加项目命令
-  let addProjectCommand = vscode.commands.registerCommand(
-    "projectExplorer.addProject",
-    async () => {
-      const folderUri = await vscode.window.showOpenDialog({
-        canSelectFiles: false,
-        canSelectFolders: true,
-        canSelectMany: false,
-        title: "选择项目文件夹",
-      });
-
-      if (folderUri && folderUri[0]) {
-        const folderName = folderUri[0].fsPath.split("/").pop() || "";
-
-        const projectName = await vscode.window.showInputBox({
-          prompt: "输入项目名称（留空则使用文件夹名）",
-          placeHolder: folderName,
-          value: folderName,
-        });
-
-        if (!projectName) {
-          return;
-        }
-
-        // 使用新的分类选择方法
-        const category = await projectManager.handleCategorySelection();
-        if (category === undefined) {
-          return; // 用户取消了分类选择
-        }
-
-        projectManager.saveProject({
-          category: category || "default", // 如果返回空字符串，使用default
-          name: projectName,
-          path: folderUri[0].fsPath,
-        });
-        projectType.refresh();
-        vscode.window.showInformationMessage(
-          `项目 "${projectName}" 已添加到 "${category || "default"}" 分类`
-        );
-      }
-    }
-  );
-
-
-  // 注册重置数据命令
-  let resetDataCommand = vscode.commands.registerCommand(
-    "projectExplorer.resetData",
-    async () => {
-      const confirm = await vscode.window.showWarningMessage(
-        "确定要重置所有数据吗？此操作不可恢复！",
-        { modal: true },
-        "重置"
-      );
-
-      if (confirm === "重置") {
-        projectManager.resetData();
-        projectType.refresh();
-        vscode.window.showInformationMessage("数据已重置");
-      }
-    }
-  );
-
-  // 注册导入导出命令
-  let exportDataCommand = vscode.commands.registerCommand(
-    "projectExplorer.exportData",
-    async () => {
-      await projectManager.exportData();
-    }
-  );
-
-  let importDataCommand = vscode.commands.registerCommand(
-    "projectExplorer.importData",
-    async () => {
-      await projectManager.importData();
-      projectType.refresh(); // 刷新视图
-    }
-  );
-
   context.subscriptions.push(
     vscode.window.onDidChangeWindowState(() => {
       projectType.refresh();
     })
   );
 
-  context.subscriptions.push(
-    openCategoryProjectsCommand,
-    addProjectCommand,
-    addCurrentProjectCommand,
-    resetDataCommand,
-    exportDataCommand,
-    importDataCommand
-  );
-
   // 注册视图
-  vscode.window.createTreeView("projectExplorer", {
+  const treeView = vscode.window.createTreeView("projectExplorer", {
     treeDataProvider: projectType,
   });
+
+  // 必需的命令注册 - 简洁版本，直接调用方法
+  context.subscriptions.push(
+    vscode.commands.registerCommand("projectExplorer.addProject", () => projectType.addProject()),
+    vscode.commands.registerCommand("projectExplorer.addCurrentProject", () => projectType.addCurrentProject()),
+    vscode.commands.registerCommand("projectExplorer.resetData", () => projectType.resetData()),
+    vscode.commands.registerCommand("projectExplorer.exportData", () => projectType.exportData()),
+    vscode.commands.registerCommand("projectExplorer.importData", () => projectType.importData()),
+    vscode.commands.registerCommand("projectExplorer.openCategoryProjects", (item: ProjectItem) => item.openCategoryProjects())
+  );
 };
+
 export class ProjectType implements vscode.TreeDataProvider<ProjectItem> {
   private _onDidChangeTreeData: vscode.EventEmitter<
     ProjectItem | undefined | null | void
@@ -208,7 +49,10 @@ export class ProjectType implements vscode.TreeDataProvider<ProjectItem> {
           new ProjectItem(
             category,
             vscode.TreeItemCollapsibleState.Collapsed,
-            "category"
+            "category",
+            undefined,
+            undefined,
+            this.projectManager // 传递 ProjectManager 实例
           )
       );
     } else if (element.type === "category") {
@@ -221,7 +65,8 @@ export class ProjectType implements vscode.TreeDataProvider<ProjectItem> {
             vscode.TreeItemCollapsibleState.None,
             "project",
             project.path,
-            element.label // 添加父类别信息
+            element.label, // 添加父类别信息
+            this.projectManager // 传递 ProjectManager 实例
           )
       );
     }
@@ -234,6 +79,107 @@ export class ProjectType implements vscode.TreeDataProvider<ProjectItem> {
     // 触发视图刷新
     this._onDidChangeTreeData.fire();
   }
+
+  // 功能方法 - 可以通过其他方式调用（如快捷键、状态栏等）
+  async addProject(): Promise<void> {
+    const folderUri = await vscode.window.showOpenDialog({
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+      title: "选择项目文件夹",
+    });
+
+    if (folderUri && folderUri[0]) {
+      const folderName = folderUri[0].fsPath.split("/").pop() || "";
+
+      const projectName = await vscode.window.showInputBox({
+        prompt: "输入项目名称（留空则使用文件夹名）",
+        placeHolder: folderName,
+        value: folderName,
+      });
+
+      if (!projectName) {
+        return;
+      }
+
+      // 使用新的分类选择方法
+      const category = await this.projectManager.handleCategorySelection();
+      if (category === undefined) {
+        return; // 用户取消了分类选择
+      }
+
+      this.projectManager.saveProject({
+        category: category || "default", // 如果返回空字符串，使用default
+        name: projectName,
+        path: folderUri[0].fsPath,
+      });
+      this.refresh();
+      vscode.window.showInformationMessage(
+        `项目 "${projectName}" 已添加到 "${category || "default"}" 分类`
+      );
+    }
+  }
+
+  async addCurrentProject(): Promise<void> {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+      vscode.window.showErrorMessage("没有打开的工作区");
+      return;
+    }
+
+    const folderPath = workspaceFolder.uri.fsPath;
+    const folderName = workspaceFolder.name;
+
+    // 获取项目名称
+    const projectName = await vscode.window.showInputBox({
+      prompt: "输入项目名称（留空则使用文件夹名）",
+      placeHolder: folderName,
+      value: folderName,
+    });
+
+    if (!projectName) {
+      return;
+    }
+
+    // 选择分类
+    const category = await this.projectManager.handleCategorySelection();
+    if (category === undefined) {
+      return; // 用户取消了分类选择
+    }
+
+    this.projectManager.saveProject({
+      category: category || "default", // 如果返回空字符串，使用default
+      name: projectName,
+      path: folderPath,
+    });
+    this.refresh();
+    vscode.window.showInformationMessage(
+      `项目 "${projectName}" 已添加到 "${category || "default"}" 分类`
+    );
+  }
+
+  async resetData(): Promise<void> {
+    const confirm = await vscode.window.showWarningMessage(
+      "确定要重置所有数据吗？此操作不可恢复！",
+      { modal: true },
+      "重置"
+    );
+
+    if (confirm === "重置") {
+      this.projectManager.resetData();
+      this.refresh();
+      vscode.window.showInformationMessage("数据已重置");
+    }
+  }
+
+  async exportData(): Promise<void> {
+    await this.projectManager.exportData();
+  }
+
+  async importData(): Promise<void> {
+    await this.projectManager.importData();
+    this.refresh(); // 刷新视图
+  }
 }
 
 export class ProjectItem extends vscode.TreeItem {
@@ -242,7 +188,8 @@ export class ProjectItem extends vscode.TreeItem {
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     public readonly type: "category" | "project",
     public readonly projectPath?: string,
-    public readonly parent?: string
+    public readonly parent?: string,
+    private readonly projectManager?: ProjectManager
   ) {
     super(label, collapsibleState);
 
@@ -255,6 +202,7 @@ export class ProjectItem extends vscode.TreeItem {
       this.contextValue = "project";
     }
 
+    // 项目双击直接打开（不需要命令）
     if (type === "project" && projectPath) {
       this.command = {
         command: "vscode.openFolder",
@@ -263,7 +211,44 @@ export class ProjectItem extends vscode.TreeItem {
       };
     }
   }
+
+  // 右键菜单功能 - 通过直接调用实现
+  async openCategoryProjects(): Promise<void> {
+    if (this.type === "category" && this.projectManager) {
+      const projects = this.projectManager.getProjectsByCategory(this.label);
+      // 为每个项目创建一个打开窗口的Promise
+      const openPromises = projects.map(
+        (project, index) =>
+          new Promise<void>((resolve) => {
+            // 添加小延迟，避免同时打开太多窗口
+            setTimeout(() => {
+              vscode.commands.executeCommand(
+                "vscode.openFolder",
+                vscode.Uri.file(project.path),
+                { forceNewWindow: true }
+              );
+              resolve();
+            }, index * 500); // 每个窗口间隔500ms
+          })
+      );
+
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: `正在打开 ${this.label} 下的项目...`,
+          cancellable: false,
+        },
+        async () => {
+          await Promise.all(openPromises);
+          vscode.window.showInformationMessage(
+            `已打开 ${this.label} 下的所有项目`
+          );
+        }
+      );
+    }
+  }
 }
+
 export class ProjectManager {
   private static readonly STORAGE_KEY =
     "publisher.project-master.storage.projects";
@@ -284,7 +269,6 @@ export class ProjectManager {
 
   // 导出数据
   async exportData(): Promise<void> {
-    // ... 现有的 exportData 方法内容 ...
     const data = this.getAllProjects();
     const jsonData = JSON.stringify(data, null, 2);
 
@@ -309,7 +293,6 @@ export class ProjectManager {
 
   // 导入数据
   async importData(): Promise<void> {
-    // ... 现有的 importData 方法内容 ...
     const uri = await vscode.window.showOpenDialog({
       canSelectFiles: true,
       canSelectFolders: false,
@@ -348,7 +331,6 @@ export class ProjectManager {
     }
   }
 
-  // ... 其他所有 ProjectManager 类的方法 ...
   saveProject(project: ProjectData): void {
     this.projects.push(project);
     this.context.globalState.update(ProjectManager.STORAGE_KEY, this.projects);
@@ -515,6 +497,7 @@ export class ProjectManager {
     });
   }
 }
+
 export interface ProjectData {
   category: string;
   name: string;

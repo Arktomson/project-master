@@ -6,7 +6,7 @@ import { registerFolderCommands } from "./commands/folderCommands";
 import { registerChoreCommands } from "./commands/choreCommands";
 
 export function activate(context: vscode.ExtensionContext) {
-  initProcess(context);
+  // initProcess(context);
 
   loadProjectManagerView(context);
 
