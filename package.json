@@ -77,22 +77,6 @@
         "title": "打开分类下所有项目"
       },
       {
-        "command": "projectExplorer.renameProject",
-        "title": "重命名项目"
-      },
-      {
-        "command": "projectExplorer.deleteProject",
-        "title": "删除项目"
-      },
-      {
-        "command": "projectExplorer.renameCategory",
-        "title": "重命名分类"
-      },
-      {
-        "command": "projectExplorer.deleteCategory",
-        "title": "删除分类"
-      },
-      {
         "command": "projectExplorer.exportData",
         "title": "导出数据",
         "icon": "$(export)"
@@ -101,10 +85,6 @@
         "command": "projectExplorer.importData",
         "title": "导入数据",
         "icon": "$(arrow-down)"
-      },
-      {
-        "command": "projectExplorer.openProjectInCurrentWindow",
-        "title": "在当前窗口打开"
       },
       {
         "command": "externalFileView.addFile",
@@ -172,31 +152,6 @@
         {
           "command": "projectExplorer.openCategoryProjects",
           "when": "view == projectExplorer && viewItem == category",
-          "group": "1_modification"
-        },
-        {
-          "command": "projectExplorer.renameCategory",
-          "when": "view == projectExplorer && viewItem == category",
-          "group": "1_modification"
-        },
-        {
-          "command": "projectExplorer.deleteCategory",
-          "when": "view == projectExplorer && viewItem == category",
-          "group": "1_modification"
-        },
-        {
-          "command": "projectExplorer.openProjectInCurrentWindow",
-          "when": "view == projectExplorer && viewItem == project",
-          "group": "1_modification"
-        },
-        {
-          "command": "projectExplorer.renameProject",
-          "when": "view == projectExplorer && viewItem == project",
-          "group": "1_modification"
-        },
-        {
-          "command": "projectExplorer.deleteProject",
-          "when": "view == projectExplorer && viewItem == project",
           "group": "1_modification"
         },
         {

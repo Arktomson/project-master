@@ -4,7 +4,6 @@ import { loadProjectManagerView } from "./view/projectManager";
 import { initProcess } from "./view";
 import { registerFolderCommands } from "./commands/folderCommands";
 import { registerChoreCommands } from "./commands/choreCommands";
-import { registerTabDragDropEvents } from "./view/tabDragDrop";
 
 export function activate(context: vscode.ExtensionContext) {
   initProcess(context);
@@ -18,8 +17,6 @@ export function activate(context: vscode.ExtensionContext) {
   // 注册其他命令
   registerChoreCommands(context);
 
-  // 注册标签页拖拽事件
-  // registerTabDragDropEvents(context);
 }
 
 export function deactivate() {}

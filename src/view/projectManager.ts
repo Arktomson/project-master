@@ -4,19 +4,6 @@ export const loadProjectManagerView = (context: vscode.ExtensionContext) => {
   const projectManager = new ProjectManager(context);
   const projectType = new ProjectType(projectManager);
 
-  // 注册在当前窗口打开项目的命令
-  let openProjectInCurrentWindowCommand = vscode.commands.registerCommand(
-    "projectExplorer.openProjectInCurrentWindow",
-    async (item: ProjectItem) => {
-      if (item.type === "project" && item.projectPath) {
-        vscode.commands.executeCommand(
-          "vscode.openFolder",
-          vscode.Uri.file(item.projectPath),
-          { forceNewWindow: false }
-        );
-      }
-    }
-  );
 
   // 注册打开类别下所有项目的命令
   let openCategoryProjectsCommand = vscode.commands.registerCommand(
@@ -143,111 +130,6 @@ export const loadProjectManagerView = (context: vscode.ExtensionContext) => {
     }
   );
 
-  // 注册重命名项目命令
-  let renameProjectCommand = vscode.commands.registerCommand(
-    "projectExplorer.renameProject",
-    async (item: ProjectItem) => {
-      if (item.type === "project") {
-        const newName = await vscode.window.showInputBox({
-          prompt: "输入新的项目名称",
-          placeHolder: item.label,
-          value: item.label,
-        });
-
-        if (newName && newName !== item.label) {
-          const category = item.parent || "default";
-          if (projectManager.renameProject(item.label, category, newName)) {
-            projectType.refresh();
-            vscode.window.showInformationMessage(`项目已重命名为: ${newName}`);
-          } else {
-            vscode.window.showErrorMessage("重命名项目失败");
-          }
-        }
-      }
-    }
-  );
-
-  // 注册删除项目命令
-  let deleteProjectCommand = vscode.commands.registerCommand(
-    "projectExplorer.deleteProject",
-    async (item: ProjectItem) => {
-      if (item.type === "project") {
-        const confirm = await vscode.window.showWarningMessage(
-          `确定要删除项目 "${item.label}" 吗？`,
-          { modal: true },
-          "删除"
-        );
-
-        if (confirm === "删除") {
-          const category = item.parent || "default";
-          if (projectManager.deleteProject(item.label, category)) {
-            projectType.refresh();
-            vscode.window.showInformationMessage(`项目 "${item.label}" 已删除`);
-          } else {
-            vscode.window.showErrorMessage("删除项目失败");
-          }
-        }
-      }
-    }
-  );
-
-  // 注册重命名类别命令
-  let renameCategoryCommand = vscode.commands.registerCommand(
-    "projectExplorer.renameCategory",
-    async (item: ProjectItem) => {
-      if (item.type === "category") {
-        if (item.label === "default") {
-          vscode.window.showWarningMessage("不能重命名 default 类别");
-          return;
-        }
-
-        const newName = await vscode.window.showInputBox({
-          prompt: "输入新的类别名称",
-          placeHolder: item.label,
-          value: item.label,
-        });
-
-        if (newName && newName !== item.label) {
-          if (projectManager.renameCategory(item.label, newName)) {
-            projectType.refresh();
-            vscode.window.showInformationMessage(`类别已重命名为: ${newName}`);
-          } else {
-            vscode.window.showErrorMessage("重命名类别失败");
-          }
-        }
-      }
-    }
-  );
-
-  // 注册删除类别命令
-  let deleteCategoryCommand = vscode.commands.registerCommand(
-    "projectExplorer.deleteCategory",
-    async (item: ProjectItem) => {
-      if (item.type === "category") {
-        if (item.label === "default") {
-          vscode.window.showWarningMessage("不能删除 default 类别");
-          return;
-        }
-
-        const confirm = await vscode.window.showWarningMessage(
-          `确定要删除类别 "${item.label}" 及其所有项目吗？`,
-          { modal: true },
-          "删除"
-        );
-
-        if (confirm === "删除") {
-          if (projectManager.deleteCategory(item.label)) {
-            projectType.refresh();
-            vscode.window.showInformationMessage(
-              `类别 "${item.label}" 及其项目已删除`
-            );
-          } else {
-            vscode.window.showErrorMessage("删除类别失败");
-          }
-        }
-      }
-    }
-  );
 
   // 注册重置数据命令
   let resetDataCommand = vscode.commands.registerCommand(
@@ -293,14 +175,9 @@ export const loadProjectManagerView = (context: vscode.ExtensionContext) => {
     openCategoryProjectsCommand,
     addProjectCommand,
     addCurrentProjectCommand,
-    renameProjectCommand,
-    deleteProjectCommand,
-    renameCategoryCommand,
-    deleteCategoryCommand,
     resetDataCommand,
     exportDataCommand,
-    importDataCommand,
-    openProjectInCurrentWindowCommand
+    importDataCommand
   );
 
   // 注册视图
@@ -382,7 +259,7 @@ export class ProjectItem extends vscode.TreeItem {
       this.command = {
         command: "vscode.openFolder",
         title: "Open Folder",
-        arguments: [vscode.Uri.file(projectPath), { forceNewWindow: true }],
+        arguments: [vscode.Uri.file(projectPath), { forceNewWindow: false }],
       };
     }
   }
