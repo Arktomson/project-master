@@ -1,4 +1,6 @@
 
+## [0.3.2](https://github.com/Arktomson/project-master/compare/v0.3.1...v0.3.2) (2025-08-05)
+
 ## [0.3.1](https://github.com/Arktomson/project-master/compare/v0.3.0...v0.3.1) (2025-03-13)
 
 
@@ -82,6 +84,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
+
+
 
 
 
