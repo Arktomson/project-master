@@ -1,4 +1,11 @@
 
+## [0.3.3](https://github.com/Arktomson/project-master/compare/v0.3.2...v0.3.3) (2025-08-05)
+
+
+### ✨ 新功能
+
+* 修复action问题 ([0fd8eea](https://github.com/Arktomson/project-master/commit/0fd8eea42f31c2144be69ee79217d4108a52a1d3))
+
 ## [0.3.2](https://github.com/Arktomson/project-master/compare/v0.3.1...v0.3.2) (2025-08-05)
 
 ## [0.3.1](https://github.com/Arktomson/project-master/compare/v0.3.0...v0.3.1) (2025-03-13)
@@ -84,6 +91,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Initial release
+
+
 
 
 
