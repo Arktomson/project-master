@@ -8,30 +8,34 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+    steps:        
+      - name: publish-vscode-extension
+        uses: Arktomson/actions/vscode-extension-publish@v1.0.0
         with:
-          node-version: "18"
+          vsce_pat: ${{ secrets.VSCE_PAT }}
+      # - name: Checkout
+      #   uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: "18"
 
-      - name: Package Extension
-        run: npm run package
+      # - name: Install dependencies
+      #   run: npm install
 
-      - name: 获取版本号
-        id: get_version
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      # - name: Package Extension
+      #   run: npm run package
 
-      - name: Publish to Visual Studio Marketplace
-        run: |
-          npm install -g @vscode/vsce
-          vsce publish ${{ steps.get_version.outputs.version }} -p ${{ secrets.VSCE_PAT }}
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      # - name: 获取版本号
+      #   id: get_version
+      #   run: |
+      #     VERSION=$(node -p "require('./package.json').version")
+      #     echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      # - name: Publish to Visual Studio Marketplace
+      #   run: |
+      #     npm install -g @vscode/vsce
+      #     vsce publish ${{ steps.get_version.outputs.version }} -p ${{ secrets.VSCE_PAT }}
+      #   env:
+      #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
